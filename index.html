@@ -57,6 +57,27 @@
     .fallback{display:none;position:fixed;inset:0;z-index:35;place-items:center;padding:20px;background:#090504;text-align:center}.fallback.show{display:grid}.fallbackBox{max-width:620px;padding:28px;border-radius:28px;border:1px solid var(--line);background:rgba(255,255,255,.05)}.fallbackBox h2{font-size:2rem;margin:0 0 10px}.fallbackBox p{color:var(--muted);line-height:1.7;margin:0}
     @media(max-width:980px){.note{display:none}.topbar{align-items:flex-start}.chapter{left:14px;right:14px;width:auto;padding:22px 22px 20px;bottom:176px;border-radius:26px}.hud{left:14px;right:14px;bottom:14px;width:auto}.chapter h1{font-size:clamp(2.2rem,9vw,4rem)}}
     @media(max-width:640px){.brand img{width:184px}.controls button{padding:10px 12px;font-size:.84rem}.chapter{bottom:110px}.actions{display:none}.hudList{display:none}.chapter p{font-size:.95rem}.topbar{top:14px;left:14px;right:14px}.chapter,.hud{left:12px;right:12px}.note{display:none}}
+  
+    .portalCta{position:fixed;inset:0;z-index:8;display:grid;place-items:center;padding:24px;pointer-events:none;opacity:0;transition:opacity .45s ease}
+    .portalCta.show{opacity:1;pointer-events:auto}
+    .portalShell{position:relative;width:min(760px,calc(100vw - 30px));padding:40px 32px;border-radius:36px;border:1px solid rgba(255,225,190,.18);background:radial-gradient(circle at top, rgba(255,139,31,.16), transparent 28%),linear-gradient(180deg, rgba(16,6,4,.84), rgba(8,3,2,.92));backdrop-filter:blur(18px);box-shadow:0 40px 140px rgba(0,0,0,.58);text-align:center;overflow:hidden}
+    .portalShell::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at center, rgba(255,208,108,.08), transparent 38%),radial-gradient(circle at center, rgba(255,77,25,.12), transparent 52%);pointer-events:none}
+    .portalRings,.portalRings::before,.portalRings::after{position:absolute;left:50%;top:50%;border-radius:50%;transform:translate(-50%,-50%)}
+    .portalRings{width:420px;height:420px;border:2px solid rgba(255,139,31,.34);box-shadow:0 0 40px rgba(255,77,25,.18), inset 0 0 30px rgba(255,208,108,.10);animation:spinPortal 12s linear infinite}
+    .portalRings::before{content:"";width:330px;height:330px;border:2px solid rgba(255,208,108,.28);animation:spinPortal 9s linear infinite reverse}
+    .portalRings::after{content:"";width:250px;height:250px;border:1px solid rgba(255,255,255,.12);box-shadow:0 0 30px rgba(255,208,108,.12)}
+    .portalInner{position:relative;z-index:1;display:grid;place-items:center;gap:14px}
+    .portalInner img{width:min(320px,72vw);filter:drop-shadow(0 10px 24px rgba(0,0,0,.38))}
+    .portalTag{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:999px;border:1px solid rgba(255,225,190,.16);background:rgba(255,255,255,.04);color:#ffd7a0;font-size:.78rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
+    .portalTag::before{content:"";width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--magma));box-shadow:0 0 18px rgba(255,77,25,.75)}
+    .portalInner h2{margin:0;font-size:clamp(2.6rem,6vw,5.4rem);line-height:.9;letter-spacing:-.06em;text-shadow:0 10px 28px rgba(0,0,0,.5)}
+    .portalInner h2 span{color:var(--lava)}
+    .portalInner p{margin:0 auto;max-width:620px;color:var(--muted);font-size:clamp(1rem,1.6vw,1.14rem);line-height:1.75}
+    .portalActions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+    .portalExit{position:absolute;top:18px;right:18px;width:46px;height:46px;border-radius:16px;padding:0;display:grid;place-items:center;background:rgba(255,255,255,.06)}
+    @keyframes spinPortal{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+    @media(max-width:640px){.portalShell{padding:34px 22px;border-radius:28px}.portalRings{width:300px;height:300px}.portalRings::before{width:230px;height:230px}.portalRings::after{width:172px;height:172px}.portalExit{top:12px;right:12px}}
+
   </style>
 </head>
 <body>
@@ -67,6 +88,23 @@
   <div class="fallback" id="fallback"><div class="fallbackBox"><h2>3D engine blocked</h2><p>This V3 needs WebGL and Three.js modules. Deploy it online through Vercel or GitHub Pages, then open the live link to experience the magma volcano scene properly.</p></div></div>
   <div class="loading" id="loading"><div class="loader"><img src="assets/logo-crop.png" alt="ClientCapture" /><h1>Loading the <span>magma volcano world</span></h1><p>Embedding the cottage into a volcanic world with magma rivers, ash, smoke, embers and a cinematic crater approach.</p><div class="bar"><span id="loadBar"></span></div></div></div>
   <div class="doorOverlay" id="doorOverlay"><div class="doorHalf left"></div><div class="doorHalf right"></div><div class="doorLight"></div></div>
+
+  <div class="portalCta" id="portalCta">
+    <div class="portalShell">
+      <div class="portalRings"></div>
+      <button class="portalExit" id="closePortalCta" aria-label="Close">✕</button>
+      <div class="portalInner">
+        <div class="portalTag">ClientCapture final portal</div>
+        <img src="assets/logo-crop.png" alt="ClientCapture" />
+        <h2>The <span>ClientCapture portal</span> is open.</h2>
+        <p>You reached the end of the volcano world. Step through into the main ClientCapture website and continue into the full business portal experience.</p>
+        <div class="portalActions">
+          <a class="button primary" href="https://www.getclientcapture.co.uk" target="_blank" rel="noopener">Enter getclientcapture.co.uk</a>
+          <button id="restartJourney">Restart journey</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="ui">
     <header class="topbar"><a class="brand" href="#"><img src="assets/logo-crop.png" alt="ClientCapture" /></a><div class="controls"><button id="resetBtn">Reset</button><button id="orbitBtn" class="ghost">Volcano orbit</button><button id="doorBtn" class="primary">Open magma portal</button></div></header>
@@ -90,6 +128,9 @@
     const copyEl = document.getElementById('copy');
     const kickerEl = document.getElementById('kicker');
     const doorOverlay = document.getElementById('doorOverlay');
+    const portalCta = document.getElementById('portalCta');
+    const closePortalCta = document.getElementById('closePortalCta');
+    const restartJourney = document.getElementById('restartJourney');
 
     let renderer;
     try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:'high-performance' }); }
@@ -224,12 +265,14 @@
     const clamp=v=>Math.max(0,Math.min(1,v)); const setProgress=v=>target=clamp(v);
     addEventListener('wheel',e=>{e.preventDefault();setProgress(target+e.deltaY*.00045)},{passive:false});
     let touch=false,lastY=0; addEventListener('touchstart',e=>{touch=true;lastY=e.touches[0].clientY},{passive:true}); addEventListener('touchmove',e=>{if(!touch)return; const y=e.touches[0].clientY; setProgress(target+(lastY-y)*.0022); lastY=y;},{passive:true}); addEventListener('touchend',()=>touch=false,{passive:true});
-    document.getElementById('resetBtn').onclick=()=>{doorMode=false;doorOverlay.classList.remove('active');setProgress(0)};
+    document.getElementById('resetBtn').onclick=()=>{doorMode=false;doorOverlay.classList.remove('active');portalCta.classList.remove('show');setProgress(0)};
     document.getElementById('wideBtn').onclick=()=>setProgress(.03);
     document.getElementById('craterBtn').onclick=()=>setProgress(.29);
     document.getElementById('riverBtn').onclick=()=>setProgress(.55);
     document.getElementById('orbitBtn').onclick=()=>{auto=!auto;document.getElementById('orbitBtn').textContent=auto?'Pause orbit':'Volcano orbit'};
-    function openDoor(){doorMode=true;doorOverlay.classList.add('active');setProgress(.985);setTimeout(()=>doorOverlay.classList.remove('active'),1700)}
+    function openDoor(){doorMode=true;doorOverlay.classList.add('active');setProgress(.985);setTimeout(()=>doorOverlay.classList.remove('active'),1700);setTimeout(()=>portalCta.classList.add('show'),900)}
+    closePortalCta.onclick=()=>portalCta.classList.remove('show');
+    restartJourney.onclick=()=>{portalCta.classList.remove('show');doorMode=false;setProgress(0)}
     document.getElementById('doorBtn').onclick=openDoor; document.getElementById('doorBtn2').onclick=openDoor;
 
     const clock = new THREE.Clock();
@@ -251,6 +294,7 @@
       const sp=smoke.geometry.attributes.position.array; for(let i=0;i<smokeBase.length;i++){const b=smokeBase[i]; sp[i*3]=b.x+Math.sin(t*.32+b.phase)*.25; sp[i*3+1]=b.y+((t*.22+i*.006)%2); sp[i*3+2]=b.z+Math.cos(t*.28+b.phase)*.25;} smoke.geometry.attributes.position.needsUpdate=true;
       const ap=ash.geometry.attributes.position.array; for(let i=0;i<ashBase.length;i++){const b=ashBase[i]; ap[i*3]=b.x+Math.sin(t*.18+b.phase)*.16; ap[i*3+1]=b.y-((t*.06+i*.001)%1.5); ap[i*3+2]=b.z+Math.cos(t*.2+b.phase)*.16;} ash.geometry.attributes.position.needsUpdate=true;
       if(model) model.position.y = .14 + Math.sin(t*1.2)*.012;
+      if(current > .972){ portalCta.classList.add('show'); } else if(!doorMode) { portalCta.classList.remove('show'); }
       progressEl.style.width=Math.round(current*100)+'%'; percentEl.textContent=Math.round(current*100)+'%'; updateCopy(current);
       renderer.render(scene,camera);
     }
