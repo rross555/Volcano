@@ -11,26 +11,89 @@
       --ink:#090605;
       --paper:#efe5d3;
       --blood:#c1261d;
+      --blood-2:#ff5138;
       --ember:#ff6b31;
       --glass:rgba(15,9,7,.48);
       --edge:rgba(255,235,215,.16);
+      --panX:0px;
+      --panY:0px;
+      --lookX:0px;
+      --lookY:0px;
+      --gyroX:0px;
+      --gyroY:0px;
     }
     *{box-sizing:border-box}
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--ink);color:var(--paper);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
     button{font:inherit}
     .site{position:relative;width:100%;height:100%;isolation:isolate;background:#080505;overflow:hidden;touch-action:none}
-    .world{position:absolute;inset:-3%;overflow:hidden;background:url('assets/samurai-poster.jpg') center 54%/cover no-repeat;transform:scale(1.04);transition:transform .8s cubic-bezier(.2,.8,.2,1),filter .7s ease}
-    .world.is-awake{transform:scale(1.075);filter:saturate(1.16) contrast(1.04)}
-    .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 54%;transform:translate3d(var(--px,0),var(--py,0),0) scale(1.045);transition:filter .7s ease;filter:saturate(.92) contrast(1.04) brightness(.84)}
-    .world.is-awake .hero-video{filter:saturate(1.12) contrast(1.08) brightness(.92)}
+    .scene{position:absolute;inset:0;perspective:1200px;transform-style:preserve-3d;transition:transform .3s ease}
+    .scene.punch{animation:punch .42s cubic-bezier(.18,.8,.22,1)}
+    @keyframes punch{0%{transform:scale(1)}35%{transform:scale(1.02)}100%{transform:scale(1)}}
+
+    .world{position:absolute;inset:-4%;overflow:hidden;transform-style:preserve-3d;
+      transform:translate3d(0,0,0);
+      transition:filter .7s ease, transform .18s linear;
+      background:#070404;
+    }
+    .world.is-awake{filter:saturate(1.12) contrast(1.04) brightness(1.02)}
+
+    .layer{position:absolute;inset:-4%;will-change:transform}
+    .backdrop{background:url('assets/samurai-poster.jpg') center 54%/cover no-repeat;filter:blur(12px) brightness(.34) saturate(.65);opacity:.92;
+      transform:translate3d(calc((var(--panX) + var(--gyroX)) * .35),calc((var(--lookY) + var(--gyroY)) * .18),-60px) scale(1.18);
+    }
+    .hero-wrap{position:absolute;inset:-2%;overflow:hidden;transform:translate3d(calc((var(--panX) + var(--gyroX)) * .82),calc((var(--lookY) + var(--gyroY)) * .45),0) scale(1.055)}
+    .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 54%;
+      transform:translate3d(calc(var(--lookX) * .6),calc(var(--lookY) * .55),0) scale(1.02);
+      transition:filter .7s ease;
+      filter:saturate(.93) contrast(1.05) brightness(.86)
+    }
+    .world.is-awake .hero-video{filter:saturate(1.1) contrast(1.09) brightness(.95)}
+
+    .fog{background:
+      radial-gradient(circle at 16% 80%, rgba(255,105,65,.08), transparent 22%),
+      radial-gradient(circle at 84% 78%, rgba(255,89,39,.09), transparent 24%),
+      radial-gradient(circle at 50% 88%, rgba(250,246,230,.08), transparent 26%);
+      mix-blend-mode:screen; opacity:.85;
+      transform:translate3d(calc((var(--panX) + var(--gyroX)) * .55),calc((var(--lookY) + var(--gyroY)) * .28),22px) scale(1.08);
+      animation:fogDrift 16s ease-in-out infinite alternate;
+    }
+    @keyframes fogDrift{from{opacity:.64}to{opacity:.9;transform:translate3d(calc((var(--panX) + var(--gyroX)) * .58 + 12px),calc((var(--lookY) + var(--gyroY)) * .28 - 6px),22px) scale(1.12)}}
+
+    .foreground{pointer-events:none;mix-blend-mode:multiply;opacity:.95}
+    .fg-left,.fg-right{position:absolute;top:-8%;bottom:-8%;width:30%;filter:blur(.2px)}
+    .fg-left{left:-3%;transform:translate3d(calc((var(--panX) + var(--gyroX)) * 1.12),0,55px)}
+    .fg-right{right:-3%;transform:translate3d(calc((var(--panX) + var(--gyroX)) * 1.25),0,55px)}
+    .fg-left::before,.fg-right::before{content:"";position:absolute;inset:0;background:
+      radial-gradient(circle at 30% 25%, rgba(0,0,0,.15), transparent 16%),
+      linear-gradient(180deg, rgba(15,10,10,0) 0%, rgba(15,10,10,.9) 100%);
+    }
+    .fg-left::after,.fg-right::after{content:"";position:absolute;inset:0;background-repeat:no-repeat;background-size:100% 100%;opacity:.92}
+    .fg-left::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 1200'%3E%3Cpath d='M90 0 C40 80,80 150,70 240 C60 320,25 390,75 470 C125 550,120 650,80 730 C40 810,80 880,135 940 C190 1000,160 1100,130 1200 L0 1200 L0 0 Z' fill='%23050404'/%3E%3Cpath d='M220 0 C190 140,270 190,230 330 C190 470,300 560,250 700 C210 810,250 960,330 1200 L180 1200 C160 1070,140 980,120 880 C100 760,100 660,150 540 C190 440,120 340,160 220 C200 110,170 40,150 0 Z' fill='%23070505'/%3E%3C/svg%3E");}
+    .fg-right::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 1200'%3E%3Cpath d='M330 0 C360 90,330 150,350 260 C370 360,300 430,310 510 C320 590,370 690,350 810 C335 900,285 1000,260 1200 L400 1200 L400 0 Z' fill='%23050404'/%3E%3Cpath d='M160 0 C130 140,170 250,150 340 C130 430,50 520,100 650 C150 780,90 940,30 1200 L180 1200 C220 1040,250 930,255 790 C260 630,180 520,220 390 C255 270,240 160,265 0 Z' fill='%23070505'/%3E%3C/svg%3E");}
+
+    .interactive-halo{position:absolute;left:50%;top:63%;width:min(48vw,520px);height:min(54vh,620px);transform:translate(-50%,-50%);pointer-events:none;z-index:7;opacity:.78}
+    .halo-eyes i,.blade-glow{position:absolute;display:block;opacity:0;transition:opacity .18s ease, filter .18s ease}
+    .halo-eyes i{top:30%;width:16px;height:8px;border-radius:50%;background:radial-gradient(circle at 50% 50%, #fff, #ffd7c7 30%, #ff5335 65%, rgba(255,65,38,.1));box-shadow:0 0 10px #fff,0 0 26px rgba(255,85,48,.9),0 0 48px rgba(255,73,41,.5);filter:blur(.2px)}
+    .halo-eyes i:first-child{left:43%}
+    .halo-eyes i:last-child{left:53%}
+    .blade-glow{left:58%;top:22%;width:10px;height:50%;transform:rotate(18deg);background:linear-gradient(180deg, rgba(255,255,255,0), rgba(255,245,235,.95) 14%, rgba(255,94,52,.96) 52%, rgba(255,255,255,.2) 100%);box-shadow:0 0 16px rgba(255,255,255,.85),0 0 40px rgba(255,92,49,.85),0 0 100px rgba(255,73,38,.35);border-radius:999px;filter:blur(.4px)}
+    .interactive-halo.awake .halo-eyes i,
+    .interactive-halo.awake .blade-glow{opacity:1}
+    .interactive-halo.awake .halo-eyes i{animation:eyePulse .95s ease 2}
+    .interactive-halo.awake .blade-glow{animation:bladePulse .95s ease 2}
+    @keyframes eyePulse{0%{transform:scale(.6);opacity:0}18%{transform:scale(1.2);opacity:1}100%{transform:scale(1);opacity:.95}}
+    @keyframes bladePulse{0%{transform:rotate(18deg) scaleY(.4);opacity:0}22%{transform:rotate(18deg) scaleY(1.15);opacity:1}100%{transform:rotate(18deg) scaleY(1);opacity:.85}}
+
     .veil{position:absolute;inset:0;pointer-events:none;background:
       radial-gradient(circle at 50% 58%,transparent 22%,rgba(4,2,2,.18) 60%,rgba(4,2,2,.78) 100%),
-      linear-gradient(180deg,rgba(4,2,2,.38),transparent 24%,transparent 65%,rgba(4,2,2,.72));
-      mix-blend-mode:multiply}
-    .grain{position:absolute;inset:-50%;opacity:.13;pointer-events:none;animation:grain .22s steps(2) infinite;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
+      linear-gradient(180deg,rgba(4,2,2,.38),transparent 24%,transparent 65%,rgba(4,2,2,.72));mix-blend-mode:multiply;z-index:8}
+    .ambient-red{position:absolute;inset:0;pointer-events:none;background:
+      radial-gradient(circle at 50% 72%, rgba(255,64,35,.12), transparent 24%),
+      radial-gradient(circle at 50% 56%, rgba(255,115,72,.06), transparent 28%);mix-blend-mode:screen;z-index:8}
+    .grain{position:absolute;inset:-50%;opacity:.13;pointer-events:none;z-index:9;animation:grain .22s steps(2) infinite;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
     @keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(3%,-2%)}50%{transform:translate(-2%,3%)}75%{transform:translate(1%,2%)}100%{transform:translate(-3%,-1%)}}
 
-    .hud{position:absolute;inset:0;z-index:8;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));opacity:0;transform:translateY(12px);transition:opacity .9s ease .25s,transform .9s ease .25s}
+    .hud{position:absolute;inset:0;z-index:24;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));opacity:0;transform:translateY(12px);transition:opacity .9s ease .25s,transform .9s ease .25s}
     .site.entered .hud{opacity:1;transform:none}
     .topbar,.bottombar{display:flex;align-items:center;justify-content:space-between;gap:14px}
     .brand{display:flex;align-items:center;gap:11px;letter-spacing:.3em;text-transform:uppercase;font-size:11px;font-weight:700;text-shadow:0 2px 20px #000}
@@ -45,14 +108,14 @@
     @keyframes pulse{50%{transform:scale(1.7);opacity:.45}}
     .seal{border:1px solid rgba(255,229,206,.25);background:rgba(40,11,8,.45);backdrop-filter:blur(10px);color:rgba(255,235,214,.9);font-family:Georgia,serif;padding:9px 12px;border-radius:2px;font-size:11px;letter-spacing:.18em;text-transform:uppercase}
 
-    .samurai-hotspot{position:absolute;z-index:7;left:50%;top:63%;width:min(36vw,330px);height:min(42vh,460px);transform:translate(-50%,-50%);border:0;background:transparent;cursor:crosshair;pointer-events:none;outline:none;border-radius:50%}
+    .samurai-hotspot{position:absolute;z-index:23;left:50%;top:63%;width:min(36vw,330px);height:min(42vh,460px);transform:translate(-50%,-50%);border:0;background:transparent;cursor:crosshair;pointer-events:none;outline:none;border-radius:50%}
     .site.entered .samurai-hotspot{pointer-events:auto}
     .samurai-hotspot::before{content:"";position:absolute;inset:15%;border:1px solid rgba(255,115,75,0);border-radius:50%;transition:.35s ease;box-shadow:0 0 0 rgba(255,90,46,0)}
     .samurai-hotspot:hover::before,.samurai-hotspot:focus-visible::before{border-color:rgba(255,130,89,.35);box-shadow:0 0 50px rgba(200,35,24,.2)}
     .samurai-hotspot span{position:absolute;left:50%;bottom:4%;transform:translate(-50%,10px);opacity:0;white-space:nowrap;color:#fff0e4;font-size:10px;letter-spacing:.26em;text-transform:uppercase;text-shadow:0 3px 14px #000;transition:.3s ease}
     .samurai-hotspot:hover span,.samurai-hotspot:focus-visible span{opacity:.82;transform:translate(-50%,0)}
 
-    .intro{position:absolute;inset:0;z-index:30;background:#060404;display:grid;place-items:center;overflow:hidden;transition:opacity 1s ease,visibility 1s ease}
+    .intro{position:absolute;inset:0;z-index:40;background:#060404;display:grid;place-items:center;overflow:hidden;transition:opacity 1s ease,visibility 1s ease}
     .site.entered .intro{opacity:0;visibility:hidden;pointer-events:none}
     .intro-bg{position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,4,4,.98),rgba(6,4,4,.46) 50%,rgba(6,4,4,.95)),url('assets/samurai-poster.jpg') center 54%/cover no-repeat;filter:grayscale(.65) brightness(.42) contrast(1.2);transform:scale(1.06);animation:introDrift 8s ease-in-out infinite alternate}
     @keyframes introDrift{to{transform:scale(1.11) translateY(-1%)}}
@@ -73,20 +136,24 @@
     .flash{position:absolute;inset:0;z-index:55;background:white;pointer-events:none;opacity:0;mix-blend-mode:screen}
     .flash.fire{animation:flash .55s ease}
     @keyframes flash{0%{opacity:0}18%{opacity:.75}100%{opacity:0}}
-    .ink-panels{position:absolute;inset:0;z-index:25;pointer-events:none;display:flex}
+    .ink-panels{position:absolute;inset:0;z-index:35;pointer-events:none;display:flex}
     .ink-panels i{flex:1;background:#050303;transform-origin:center;transition:transform 1.05s cubic-bezier(.72,0,.18,1)}
     .site.entered .ink-panels i:first-child{transform:translateX(-102%)}
     .site.entered .ink-panels i:last-child{transform:translateX(102%)}
 
-    .particles{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+    .particles{position:absolute;inset:0;z-index:26;pointer-events:none;overflow:hidden}
     .particle{position:absolute;width:4px;height:11px;border-radius:80% 0 80% 0;background:radial-gradient(circle at 30% 30%,#ffd1a8,var(--ember) 55%,rgba(140,20,13,.1));box-shadow:0 0 10px rgba(255,85,36,.65);animation:fly var(--d,1.4s) ease-out forwards;transform:translate(-50%,-50%) rotate(var(--r,0deg))}
     @keyframes fly{to{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(calc(var(--r) + 220deg));opacity:0}}
-    .ring{position:absolute;z-index:5;left:50%;top:63%;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,116,74,.8);transform:translate(-50%,-50%) scale(.4);opacity:0;pointer-events:none}
+    .ring{position:absolute;z-index:25;left:50%;top:63%;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,116,74,.8);transform:translate(-50%,-50%) scale(.4);opacity:0;pointer-events:none}
     .ring.fire{animation:ring 1s ease-out}
     @keyframes ring{0%{opacity:.9;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(-50%,-50%) scale(11)}}
 
-    .toast{position:absolute;z-index:20;left:50%;bottom:92px;transform:translate(-50%,15px);padding:10px 14px;border-radius:999px;background:rgba(12,6,5,.56);border:1px solid var(--edge);backdrop-filter:blur(12px);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:0;pointer-events:none;transition:.35s ease;white-space:nowrap}
+    .toast{position:absolute;z-index:31;left:50%;bottom:92px;transform:translate(-50%,15px);padding:10px 14px;border-radius:999px;background:rgba(12,6,5,.56);border:1px solid var(--edge);backdrop-filter:blur(12px);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:0;pointer-events:none;transition:.35s ease;white-space:nowrap}
     .toast.show{opacity:1;transform:translate(-50%,0)}
+
+    .pan-meter{position:absolute;z-index:22;left:50%;bottom:126px;transform:translateX(-50%);width:min(220px,68vw);height:5px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;opacity:0;transition:opacity .3s ease;pointer-events:none}
+    .site.entered .pan-meter{opacity:.75}
+    .pan-meter i{display:block;width:34%;height:100%;background:linear-gradient(90deg, rgba(255,180,145,.35), rgba(255,95,52,.95), rgba(255,180,145,.35));border-radius:999px;transform:translateX(var(--meter, 98px));transition:transform .08s linear}
 
     @media (max-width:640px){
       .hero-video{object-position:center 52%}
@@ -95,20 +162,37 @@
       .prompt{font-size:9px;letter-spacing:.14em}
       .seal{display:none}
       .samurai-hotspot{top:66%;width:58vw;height:42vh}
+      .interactive-halo{top:66%;width:74vw;height:44vh}
       .toast{bottom:84px;max-width:88vw;white-space:normal;text-align:center}
+      .pan-meter{bottom:114px}
     }
     @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.grain{display:none}}
   </style>
 </head>
 <body>
   <main class="site" id="site">
-    <section class="world" id="world" aria-label="Interactive samurai landscape">
-      <video id="heroVideo" class="hero-video" poster="assets/samurai-poster.jpg" playsinline loop preload="auto">
-        <source src="assets/samurai-hero.mp4" type="video/mp4" />
-      </video>
-      <div class="veil"></div>
-      <div class="grain"></div>
-    </section>
+    <div class="scene" id="scene">
+      <section class="world" id="world" aria-label="Interactive samurai landscape">
+        <div class="layer backdrop"></div>
+        <div class="layer hero-wrap">
+          <video id="heroVideo" class="hero-video" poster="assets/samurai-poster.jpg" playsinline loop preload="auto">
+            <source src="assets/samurai-hero.mp4" type="video/mp4" />
+          </video>
+        </div>
+        <div class="layer fog"></div>
+        <div class="layer foreground">
+          <div class="fg-left"></div>
+          <div class="fg-right"></div>
+        </div>
+        <div class="interactive-halo" id="halo" aria-hidden="true">
+          <div class="halo-eyes"><i></i><i></i></div>
+          <div class="blade-glow"></div>
+        </div>
+        <div class="veil"></div>
+        <div class="ambient-red"></div>
+        <div class="grain"></div>
+      </section>
+    </div>
 
     <div class="particles" id="particles" aria-hidden="true"></div>
     <div class="ring" id="ring" aria-hidden="true"></div>
@@ -122,6 +206,9 @@
         <div class="brand"><span class="brand-mark"></span><span>Crimson Path</span></div>
         <div class="chapter">Chapter I · The Awakening</div>
         <div class="controls">
+          <button class="icon-btn" id="gyroBtn" aria-label="Enable motion look" title="Motion look">
+            <svg viewBox="0 0 24 24"><path d="M12 4v4"/><path d="M12 16v4"/><path d="M4 12h4"/><path d="M16 12h4"/><circle cx="12" cy="12" r="4"/></svg>
+          </button>
           <button class="icon-btn" id="soundBtn" aria-label="Mute sound" title="Sound">
             <svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path class="waves" d="M15 9a4 4 0 0 1 0 6M18 6a8 8 0 0 1 0 12"/></svg>
           </button>
@@ -131,19 +218,20 @@
         </div>
       </div>
       <div class="bottombar">
-        <div class="prompt"><span class="pulse-dot"></span><span>Touch the warrior · Drag across the world</span></div>
+        <div class="prompt"><span class="pulse-dot"></span><span>Drag to look around · Touch the warrior</span></div>
         <div class="seal">Ronin / 浪人</div>
       </div>
     </div>
 
     <div class="toast" id="toast" role="status" aria-live="polite">The ronin is awake</div>
+    <div class="pan-meter" id="panMeter" aria-hidden="true"><i></i></div>
 
     <section class="intro" id="intro" aria-label="Enter the experience">
       <div class="intro-bg"></div>
       <div class="intro-content">
         <p class="kanji">侍 · 浪人 · 道</p>
         <h1>RONIN</h1>
-        <p class="sub">The crimson path remembers every step.</p>
+        <p class="sub">Draw the blade and step into the crimson path.</p>
         <button class="enter-btn" id="enterBtn">Draw the blade</button>
         <p class="sound-note">Enter with sound</p>
       </div>
@@ -156,22 +244,45 @@
 
   <script>
     const site = document.getElementById('site');
+    const scene = document.getElementById('scene');
     const world = document.getElementById('world');
     const video = document.getElementById('heroVideo');
     const enterBtn = document.getElementById('enterBtn');
     const soundBtn = document.getElementById('soundBtn');
     const replayBtn = document.getElementById('replayBtn');
+    const gyroBtn = document.getElementById('gyroBtn');
     const samurai = document.getElementById('samurai');
     const particles = document.getElementById('particles');
     const slash = document.getElementById('slash');
     const flash = document.getElementById('flash');
     const ring = document.getElementById('ring');
+    const halo = document.getElementById('halo');
     const toast = document.getElementById('toast');
+    const panMeter = document.getElementById('panMeter').querySelector('i');
+
     let audioCtx;
     let entered = false;
     let dragging = false;
     let lastSlashAt = 0;
     let toastTimer;
+    let motionEnabled = false;
+    let activePointerId = null;
+    const state = {
+      pointerX: innerWidth / 2,
+      pointerY: innerHeight / 2,
+      lookX: 0,
+      lookY: 0,
+      currentPanX: 0,
+      targetPanX: 0,
+      currentGyroX: 0,
+      targetGyroX: 0,
+      currentGyroY: 0,
+      targetGyroY: 0,
+      startX: 0,
+      dragStartPan: 0
+    };
+
+    function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
 
     function swordSound(intensity = 1) {
       try {
@@ -198,6 +309,24 @@
       } catch (e) {}
     }
 
+    function pulseSound() {
+      try {
+        audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
+        const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(110, now);
+        osc.frequency.exponentialRampToValueAtTime(55, now + .55);
+        gain.gain.setValueAtTime(.0001, now);
+        gain.gain.exponentialRampToValueAtTime(.12, now + .02);
+        gain.gain.exponentialRampToValueAtTime(.0001, now + .5);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + .55);
+      } catch (e) {}
+    }
+
     function animateClass(el, cls, duration = 850) {
       el.classList.remove(cls);
       void el.offsetWidth;
@@ -215,7 +344,14 @@
       toast.textContent = message;
       toast.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 1500);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 1600);
+    }
+
+    function setMeter() {
+      const width = panMeter.parentElement.clientWidth;
+      const maxTravel = width - width * 0.34;
+      const pos = ((state.currentPanX + 180) / 360) * maxTravel;
+      panMeter.style.setProperty('--meter', pos + 'px');
     }
 
     async function enterExperience() {
@@ -251,26 +387,78 @@
       }
     }
 
+    const awakenLines = [
+      'The ronin is awake',
+      'Choose your path',
+      'The blade remembers',
+      'The warrior sees you'
+    ];
+
     function awaken(e) {
       e.stopPropagation();
       world.classList.add('is-awake');
+      halo.classList.add('awake');
       animateClass(ring, 'fire', 1100);
+      scene.classList.add('punch');
+      setTimeout(() => scene.classList.remove('punch'), 430);
       fireSlash(.75);
+      pulseSound();
       const rect = site.getBoundingClientRect();
-      burst(rect.width * .5, rect.height * .63, 24);
-      showToast('The ronin is awake');
-      setTimeout(() => world.classList.remove('is-awake'), 1200);
+      burst(rect.width * .5, rect.height * .63, 28);
+      showToast(awakenLines[Math.floor(Math.random() * awakenLines.length)]);
+      setTimeout(() => {
+        world.classList.remove('is-awake');
+        halo.classList.remove('awake');
+      }, 1300);
     }
 
-    function updateParallax(clientX, clientY) {
-      const x = (clientX / innerWidth - .5) * -18;
-      const y = (clientY / innerHeight - .5) * -12;
-      video.style.setProperty('--px', x + 'px');
-      video.style.setProperty('--py', y + 'px');
+    function updateLook(clientX, clientY) {
+      state.pointerX = clientX;
+      state.pointerY = clientY;
+      state.lookX = clamp((clientX / innerWidth - .5) * -18, -18, 18);
+      state.lookY = clamp((clientY / innerHeight - .5) * -12, -12, 12);
+      document.documentElement.style.setProperty('--lookX', state.lookX + 'px');
+      document.documentElement.style.setProperty('--lookY', state.lookY + 'px');
     }
+
+    function render() {
+      state.currentPanX += (state.targetPanX - state.currentPanX) * .11;
+      state.currentGyroX += (state.targetGyroX - state.currentGyroX) * .12;
+      state.currentGyroY += (state.targetGyroY - state.currentGyroY) * .12;
+      document.documentElement.style.setProperty('--panX', state.currentPanX + 'px');
+      document.documentElement.style.setProperty('--gyroX', state.currentGyroX + 'px');
+      document.documentElement.style.setProperty('--gyroY', state.currentGyroY + 'px');
+      setMeter();
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+
+    async function enableMotionLook() {
+      const req = window.DeviceOrientationEvent && window.DeviceOrientationEvent.requestPermission;
+      try {
+        if (typeof req === 'function') {
+          const result = await window.DeviceOrientationEvent.requestPermission();
+          if (result !== 'granted') throw new Error('Permission denied');
+        }
+        motionEnabled = true;
+        showToast('Motion look enabled');
+        gyroBtn.style.background = 'rgba(193,38,29,.35)';
+      } catch (err) {
+        showToast('Motion look unavailable');
+      }
+    }
+
+    window.addEventListener('deviceorientation', (e) => {
+      if (!motionEnabled) return;
+      const gamma = clamp(e.gamma || 0, -30, 30);
+      const beta = clamp((e.beta || 0) - 45, -35, 35);
+      state.targetGyroX = gamma * .8;
+      state.targetGyroY = beta * .35;
+    });
 
     enterBtn.addEventListener('click', enterExperience);
     samurai.addEventListener('click', awaken);
+    gyroBtn.addEventListener('click', enableMotionLook);
 
     soundBtn.addEventListener('click', async () => {
       video.muted = !video.muted;
@@ -293,34 +481,45 @@
     site.addEventListener('pointerdown', e => {
       if (!entered || e.target.closest('button')) return;
       dragging = true;
+      activePointerId = e.pointerId;
+      state.startX = e.clientX;
+      state.dragStartPan = state.targetPanX;
       site.setPointerCapture?.(e.pointerId);
+      updateLook(e.clientX, e.clientY);
       burst(e.clientX, e.clientY, 8);
     });
+
     site.addEventListener('pointermove', e => {
       if (!entered) return;
-      updateParallax(e.clientX, e.clientY);
-      if (dragging && performance.now() - lastSlashAt > 180) {
-        lastSlashAt = performance.now();
-        const spark = document.createElement('i');
-        spark.className = 'particle';
-        spark.style.left = e.clientX + 'px';
-        spark.style.top = e.clientY + 'px';
-        spark.style.setProperty('--x', (Math.random()*40-20)+'px');
-        spark.style.setProperty('--y', (-30-Math.random()*60)+'px');
-        spark.style.setProperty('--d', '.7s');
-        particles.appendChild(spark);
-        setTimeout(() => spark.remove(), 900);
+      updateLook(e.clientX, e.clientY);
+      if (dragging && e.pointerId === activePointerId) {
+        const delta = e.clientX - state.startX;
+        state.targetPanX = clamp(state.dragStartPan + delta * .48, -180, 180);
+        if (performance.now() - lastSlashAt > 180) {
+          lastSlashAt = performance.now();
+          const spark = document.createElement('i');
+          spark.className = 'particle';
+          spark.style.left = e.clientX + 'px';
+          spark.style.top = e.clientY + 'px';
+          spark.style.setProperty('--x', (Math.random()*40-20)+'px');
+          spark.style.setProperty('--y', (-30-Math.random()*60)+'px');
+          spark.style.setProperty('--d', '.7s');
+          particles.appendChild(spark);
+          setTimeout(() => spark.remove(), 900);
+        }
       }
     });
+
     site.addEventListener('pointerup', e => {
-      if (!entered || !dragging) return;
+      if (!entered || !dragging || e.pointerId !== activePointerId) return;
       dragging = false;
+      activePointerId = null;
       if (performance.now() - lastSlashAt < 260) {
         fireSlash(.45);
         burst(e.clientX, e.clientY, 12);
       }
     });
-    site.addEventListener('pointercancel', () => dragging = false);
+    site.addEventListener('pointercancel', () => { dragging = false; activePointerId = null; });
 
     video.addEventListener('error', () => {
       showToast('Video could not load — showing poster image');
@@ -331,6 +530,10 @@
       if (document.hidden) video.pause();
       else if (entered) video.play().catch(() => {});
     });
+
+    window.addEventListener('resize', () => updateLook(innerWidth / 2, innerHeight / 2));
+    updateLook(innerWidth / 2, innerHeight / 2);
+    setMeter();
   </script>
 </body>
 </html>
