@@ -1,13 +1,11 @@
-SAMURAI INTERACTIVE PORTAL V2
+SAMURAI INTERACTIVE PORTAL V5
 
-What is new:
-- Original hero video audio preserved
-- Draggable 180-style cinematic pan / scene look-around effect
-- Tap the samurai to trigger an awakening reaction
-- Eye glow effect and sword glow effect on touch
-- Extra slash, ember burst, pulse sound and camera punch effect
-- Optional motion / gyroscope look button on supported mobile devices
-- Replay intro and mute / unmute controls
+What changed:
+- Added the generated crimson panorama as a wrapped repeating 360-style background
+- The panorama now sits around and behind the hero video to create a fuller world
+- Added a sharper panorama layer and a glow panorama layer for more depth
+- Intro background updated to match the new wrapped panorama world
+- Original hero video, sound, reactions and Book a Demo links are all preserved
 
 Deploy:
-Upload the whole folder to Vercel, including the assets folder.
+Upload the entire folder to Vercel, including the assets folder.

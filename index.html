@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#090605" />
   <meta name="description" content="A premium immersive interactive samurai portal." />
-  <title>RONIN — V3 Premium Portal</title>
+  <title>RONIN — 360° Wrapped Panorama Portal</title>
   <style>
     :root{
       --ink:#090605;
@@ -16,6 +16,18 @@
       --glass:rgba(16,10,8,.5);
       --edge:rgba(255,235,215,.17);
       --panPx:0px;
+      --wrappedPan:0px;
+      --backPan:0px;
+      --atmoPan:0px;
+      --forePan:0px;
+      --panoPan:0px;
+      --panoGlowPan:0px;
+      --backY:0px;
+      --atmoY:0px;
+      --videoX:0px;
+      --videoY:0px;
+      --heroX:0px;
+      --heroY:0px;
       --lookX:0px;
       --lookY:0px;
       --orbitDeg:0deg;
@@ -41,10 +53,37 @@
     .layer{position:absolute;inset:-4%;will-change:transform}
 
     .layer-backdrop{
-      background:url('assets/samurai-poster.jpg') center 53%/cover no-repeat;
-      filter:blur(18px) brightness(.28) saturate(.7);
-      transform:translate3d(calc(var(--panPx) * .42 + var(--gyroShiftX) * .4),calc(var(--lookY) * .18 + var(--gyroShiftY) * .35),-170px) scale(1.26);
-      opacity:.96;
+      left:-160%;right:-160%;
+      background-image:url('assets/samurai-panorama-360.png');
+      background-position:0 56%;
+      background-size:auto 100%;
+      background-repeat:repeat-x;
+      filter:blur(18px) brightness(.3) saturate(.76);
+      transform:translate3d(calc(var(--backPan) + var(--gyroShiftX)),calc(var(--backY) + var(--gyroShiftY)),-170px) scale(1.22);
+      opacity:.94;
+    }
+    .layer-panorama{
+      left:-160%;right:-160%;
+      background-image:url('assets/samurai-panorama-360.png');
+      background-position:0 58%;
+      background-size:auto 100%;
+      background-repeat:repeat-x;
+      transform:translate3d(calc(var(--panoPan) + var(--gyroShiftX) * .7),calc(var(--lookY) * .15 + var(--gyroShiftY) * .35),-52px) scale(1.08);
+      filter:saturate(1.02) contrast(1.03) brightness(.82);
+      opacity:.9;
+      mask-image:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.85) 22%, rgba(0,0,0,.95) 78%, rgba(0,0,0,.4));
+      -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.85) 22%, rgba(0,0,0,.95) 78%, rgba(0,0,0,.4));
+    }
+    .layer-panorama-glow{
+      left:-160%;right:-160%;
+      background-image:linear-gradient(180deg, rgba(255,121,68,.06), rgba(255,40,22,.03)), url('assets/samurai-panorama-360.png');
+      background-position:0 58%;
+      background-size:auto 100%;
+      background-repeat:repeat-x;
+      transform:translate3d(calc(var(--panoGlowPan) + var(--gyroShiftX) * .45),calc(var(--lookY) * .12 + var(--gyroShiftY) * .22),-18px) scale(1.12);
+      mix-blend-mode:screen;
+      opacity:.28;
+      filter:blur(4px) saturate(1.08);
     }
     .layer-atmosphere{
       background:
@@ -52,21 +91,21 @@
         radial-gradient(circle at 85% 80%, rgba(255,95,52,.08), transparent 20%),
         radial-gradient(circle at 50% 86%, rgba(255,245,235,.08), transparent 26%);
       mix-blend-mode:screen;
-      transform:translate3d(calc(var(--panPx) * .62 + var(--gyroShiftX) * .55),calc(var(--lookY) * .22 + var(--gyroShiftY) * .45),-10px) scale(1.16);
+      transform:translate3d(calc(var(--atmoPan) + var(--gyroShiftX)),calc(var(--atmoY) + var(--gyroShiftY)),-10px) scale(1.16);
       opacity:.9;
       animation:fogFloat 14s ease-in-out infinite alternate;
     }
-    @keyframes fogFloat{from{opacity:.7}to{opacity:.95;transform:translate3d(calc(var(--panPx) * .62 + var(--gyroShiftX) * .55 + 14px),calc(var(--lookY) * .22 + var(--gyroShiftY) * .45 - 10px),-10px) scale(1.2)}}
+    @keyframes fogFloat{from{opacity:.7}to{opacity:.95;transform:translate3d(calc(var(--atmoPan) + var(--gyroShiftX) + 14px),calc(var(--atmoY) + var(--gyroShiftY) - 10px),-10px) scale(1.2)}}
 
-    .layer-video-wrap{transform:translate3d(calc(var(--panPx) * 1.18 + var(--gyroShiftX) * .92),calc(var(--lookY) * .42 + var(--gyroShiftY) * .5),0) scale(1.08)}
+    .layer-video-wrap{transform:translate3d(calc(var(--videoX) + var(--gyroShiftX)),calc(var(--videoY) + var(--gyroShiftY)),0) scale(1.08)}
     .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 54%;
-      transform:translate3d(calc(var(--lookX) * .7),calc(var(--lookY) * .55),0) scale(1.02);
+      transform:translate3d(var(--heroX),var(--heroY),0) scale(1.02);
       filter:saturate(.96) contrast(1.08) brightness(.87);
       transition:filter .55s ease;
     }
     .world.is-awake .hero-video{filter:saturate(1.12) contrast(1.12) brightness(.98)}
 
-    .layer-foreground{pointer-events:none;z-index:5;mix-blend-mode:multiply;opacity:.97;transform:translate3d(calc(var(--panPx) * 1.48 + var(--gyroShiftX) * 1.2),0,170px)}
+    .layer-foreground{pointer-events:none;z-index:5;mix-blend-mode:multiply;opacity:.97;transform:translate3d(calc(var(--forePan) + var(--gyroShiftX)),0,170px)}
     .branch-left,.branch-right{position:absolute;top:-10%;bottom:-10%;width:34%;filter:blur(.1px)}
     .branch-left{left:-4%}
     .branch-right{right:-4%}
@@ -140,7 +179,7 @@
 
     .intro{position:absolute;inset:0;z-index:44;background:#060404;display:grid;place-items:center;overflow:hidden;transition:opacity 1s ease,visibility 1s ease}
     .site.entered .intro{opacity:0;visibility:hidden;pointer-events:none}
-    .intro-bg{position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,4,4,.98),rgba(6,4,4,.44) 52%,rgba(6,4,4,.95)),url('assets/samurai-poster.jpg') center 54%/cover no-repeat;filter:grayscale(.62) brightness(.42) contrast(1.2);transform:scale(1.07);animation:introDrift 8s ease-in-out infinite alternate}
+    .intro-bg{position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,4,4,.98),rgba(6,4,4,.44) 52%,rgba(6,4,4,.95)),url('assets/samurai-panorama-360.png') center 54%/cover no-repeat;filter:brightness(.42) contrast(1.16);transform:scale(1.07);animation:introDrift 8s ease-in-out infinite alternate}
     @keyframes introDrift{to{transform:scale(1.12) translateY(-1%)}}
     .intro::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,transparent 0 18%,rgba(5,3,3,.74) 72%)}
     .intro-content{position:relative;z-index:2;text-align:center;padding:24px;max-width:760px}
@@ -201,6 +240,8 @@
     <div class="scene-shell" id="sceneShell">
       <section class="world" id="world" aria-label="Interactive samurai landscape">
         <div class="layer layer-backdrop"></div>
+        <div class="layer layer-panorama"></div>
+        <div class="layer layer-panorama-glow"></div>
         <div class="layer layer-atmosphere"></div>
         <div class="layer layer-video-wrap">
           <video id="heroVideo" class="hero-video" poster="assets/samurai-poster.jpg" playsinline loop preload="auto">
@@ -242,7 +283,7 @@
     <div class="hud">
       <div class="topbar">
         <div class="brand"><span class="brand-mark"></span><span>Crimson Path</span></div>
-        <div class="chapter">Chapter I · Premium Awakening</div>
+        <div class="chapter">Chapter I · Wrapped 360 Panorama</div>
         <div class="control-cluster">
           <a class="ghost-link" href="https://demo.getclientcapture.co.uk/enquiry.html" target="_blank" rel="noopener">Book a Demo</a>
           <button class="icon-btn" id="gyroBtn" aria-label="Enable motion look" title="Motion look">
@@ -260,7 +301,7 @@
         </div>
       </div>
       <div class="bottombar">
-        <div class="prompt"><span class="pulse-dot"></span><span>Drag further to orbit the world · Touch the warrior</span></div>
+        <div class="prompt"><span class="pulse-dot"></span><span>Drag continuously for a 360° view · Touch the warrior</span></div>
         <div class="seal">Ronin / 浪人</div>
       </div>
     </div>
@@ -277,7 +318,7 @@
       <div class="intro-content">
         <p class="kanji">侍 · 浪人 · 道</p>
         <h1>RONIN</h1>
-        <p class="sub">A premium interactive samurai portal. Draw the blade, keep the hero video sound, and step into a deeper orbit around the warrior.</p>
+        <p class="sub">A premium interactive samurai portal. Draw the blade and drag continuously through a wrapped 360°-style world around the warrior.</p>
         <div class="intro-actions">
           <button class="enter-btn" id="enterBtn">Draw the blade</button>
           <a class="cta-link" href="https://demo.getclientcapture.co.uk/enquiry.html" target="_blank" rel="noopener">Book a Demo</a>
@@ -340,8 +381,8 @@
       dragStartPan: 0
     };
 
-    const MAX_PAN = 560;
-    const MAX_ORBIT_DEG = 28;
+    const PAN_PERIOD = 1180;
+    const MAX_ORBIT_DEG = 11;
     const MAX_TILT_DEG = 8;
 
     function clamp(value, min, max){ return Math.min(max, Math.max(min, value)); }
@@ -413,7 +454,8 @@
       const width = panMeter.parentElement.clientWidth;
       const sliderWidth = width * .32;
       const maxTravel = width - sliderWidth;
-      const pos = ((state.currentPanPx + MAX_PAN) / (MAX_PAN * 2)) * maxTravel;
+      const normalized = ((state.currentPanPx % 360) + 360) % 360;
+      const pos = (normalized / 360) * maxTravel;
       panMeter.style.setProperty('--meter', pos + 'px');
     }
 
@@ -424,6 +466,12 @@
       state.lookY = clamp((clientY / innerHeight - .5) * -14, -14, 14);
       root.style.setProperty('--lookX', state.lookX + 'px');
       root.style.setProperty('--lookY', state.lookY + 'px');
+      root.style.setProperty('--backY', state.lookY * .18 + 'px');
+      root.style.setProperty('--atmoY', state.lookY * .22 + 'px');
+      root.style.setProperty('--videoX', state.lookX * .18 + 'px');
+      root.style.setProperty('--videoY', state.lookY * .42 + 'px');
+      root.style.setProperty('--heroX', state.lookX * .7 + 'px');
+      root.style.setProperty('--heroY', state.lookY * .55 + 'px');
     }
 
     function render() {
@@ -433,10 +481,18 @@
       state.currentGyroOrbitX += (state.targetGyroOrbitX - state.currentGyroOrbitX) * .12;
       state.currentGyroOrbitY += (state.targetGyroOrbitY - state.currentGyroOrbitY) * .12;
 
-      const orbitDeg = (state.currentPanPx / MAX_PAN) * MAX_ORBIT_DEG;
+      const orbitDeg = Math.sin((state.currentPanPx / PAN_PERIOD) * Math.PI * 2) * MAX_ORBIT_DEG;
       const tiltDeg = clamp((-state.lookY / 14) * MAX_TILT_DEG, -MAX_TILT_DEG, MAX_TILT_DEG);
 
+      const wrapped = ((state.currentPanPx % PAN_PERIOD) + PAN_PERIOD) % PAN_PERIOD;
+      const centeredWrap = wrapped - PAN_PERIOD / 2;
       root.style.setProperty('--panPx', state.currentPanPx + 'px');
+      root.style.setProperty('--wrappedPan', centeredWrap + 'px');
+      root.style.setProperty('--backPan', centeredWrap * .82 + 'px');
+      root.style.setProperty('--panoPan', centeredWrap * 1.08 + 'px');
+      root.style.setProperty('--panoGlowPan', centeredWrap * 1.18 + 'px');
+      root.style.setProperty('--atmoPan', centeredWrap * .45 + 'px');
+      root.style.setProperty('--forePan', centeredWrap * .72 + 'px');
       root.style.setProperty('--orbitDeg', orbitDeg + 'deg');
       root.style.setProperty('--tiltDeg', tiltDeg + 'deg');
       root.style.setProperty('--gyroShiftX', state.currentGyroShiftX + 'px');
@@ -525,7 +581,7 @@
     }
 
     function nudgePan(amount) {
-      state.targetPanPx = clamp(state.targetPanPx + amount, -MAX_PAN, MAX_PAN);
+      state.targetPanPx += amount;
     }
 
     function recenterView(silent = false) {
@@ -590,7 +646,7 @@
       updateLook(e.clientX, e.clientY);
       if (dragging && e.pointerId === activePointerId) {
         const delta = e.clientX - state.startX;
-        state.targetPanPx = clamp(state.dragStartPan + delta * .92, -MAX_PAN, MAX_PAN);
+        state.targetPanPx = state.dragStartPan + delta * 1.35;
         if (performance.now() - lastSlashAt > 180) {
           lastSlashAt = performance.now();
           const spark = document.createElement('i');
@@ -636,6 +692,7 @@
 
     window.addEventListener('resize', () => updateLook(innerWidth / 2, innerHeight / 2));
     updateLook(innerWidth / 2, innerHeight / 2);
+    root.style.setProperty('--wrappedPan','0px');
     recenterView(true);
   </script>
 </body>
