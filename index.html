@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#090605" />
   <meta name="description" content="A premium immersive interactive samurai portal." />
-  <title>RONIN — V6 Portal Gate Experience</title>
+  <title>RONIN — V8 ClientCapture Experience</title>
   <style>
     :root{
       --ink:#090605;
@@ -48,43 +48,45 @@
     .scene-shell.punch{animation:punch .42s cubic-bezier(.2,.86,.2,1)}
     @keyframes punch{0%{transform:scale(1)}35%{transform:scale(1.018)}100%{transform:scale(1)}}
 
-    .world{position:absolute;inset:-6%;transform-style:preserve-3d;will-change:transform;overflow:hidden;
-      transform:rotateY(calc(var(--orbitDeg) + var(--gyroOrbitX))) rotateX(calc(var(--tiltDeg) + var(--gyroOrbitY))) scale(1.03);
+    .world{position:absolute;inset:-8%;transform-style:preserve-3d;will-change:transform;overflow:hidden;
+      transform:rotateX(calc(var(--tiltDeg) + var(--gyroOrbitY))) scale(1.08);
     }
     .layer{position:absolute;inset:-4%;will-change:transform}
 
     .layer-backdrop{
-      left:-160%;right:-160%;
+      left:-220%;right:-220%;
       background-image:url('assets/samurai-panorama-360.png');
       background-position:0 56%;
       background-size:auto 100%;
       background-repeat:repeat-x;
       filter:blur(18px) brightness(.3) saturate(.76);
-      transform:translate3d(calc(var(--backPan) + var(--gyroShiftX)),calc(var(--backY) + var(--gyroShiftY)),-170px) scale(1.22);
+      transform:translate3d(calc(var(--backPan) + var(--gyroShiftX) * .65),calc(var(--backY) + var(--gyroShiftY) * .4),-170px) scale(1.34);
       opacity:.94;
     }
     .layer-panorama{
-      left:-160%;right:-160%;
+      left:-220%;right:-220%;
       background-image:url('assets/samurai-panorama-360.png');
       background-position:0 58%;
       background-size:auto 100%;
       background-repeat:repeat-x;
-      transform:translate3d(calc(var(--panoPan) + var(--gyroShiftX) * .7),calc(var(--lookY) * .15 + var(--gyroShiftY) * .35),-52px) scale(1.08);
+      transform:translate3d(calc(var(--panoPan) + var(--gyroShiftX) * .45),calc(var(--lookY) * .09 + var(--gyroShiftY) * .18),-52px) scale(1.18);
       filter:saturate(1.02) contrast(1.03) brightness(.82);
       opacity:.9;
+      transition:opacity .9s ease, transform 1.15s ease, filter .8s ease;
       mask-image:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.85) 22%, rgba(0,0,0,.95) 78%, rgba(0,0,0,.4));
       -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.85) 22%, rgba(0,0,0,.95) 78%, rgba(0,0,0,.4));
     }
     .layer-panorama-glow{
-      left:-160%;right:-160%;
+      left:-220%;right:-220%;
       background-image:linear-gradient(180deg, rgba(255,121,68,.06), rgba(255,40,22,.03)), url('assets/samurai-panorama-360.png');
       background-position:0 58%;
       background-size:auto 100%;
       background-repeat:repeat-x;
-      transform:translate3d(calc(var(--panoGlowPan) + var(--gyroShiftX) * .45),calc(var(--lookY) * .12 + var(--gyroShiftY) * .22),-18px) scale(1.12);
+      transform:translate3d(calc(var(--panoGlowPan) + var(--gyroShiftX) * .24),calc(var(--lookY) * .06 + var(--gyroShiftY) * .12),-18px) scale(1.22);
       mix-blend-mode:screen;
       opacity:.28;
       filter:blur(4px) saturate(1.08);
+      transition:opacity .9s ease, transform 1.15s ease;
     }
     .layer-atmosphere{
       background:
@@ -108,6 +110,7 @@
       z-index:6;
       transform:translate3d(calc(-50% + var(--videoX) + var(--gyroShiftX) * .32),calc(-50% + var(--videoY) + var(--gyroShiftY) * .28 + var(--portalLift)),92px) scale(1.02);
       pointer-events:none;
+      transition:transform 1s ease, opacity .8s ease;
     }
     .portal-shell{
       position:absolute;
@@ -168,13 +171,13 @@
     }
     .world.is-awake .hero-video{filter:saturate(1.13) contrast(1.14) brightness(1);transform:translate3d(var(--heroX),var(--heroY),0) scale(1.16)}
 
-    .layer-foreground{pointer-events:none;z-index:5;mix-blend-mode:multiply;opacity:.97;transform:translate3d(calc(var(--forePan) + var(--gyroShiftX)),0,170px)}
-    .branch-left,.branch-right{position:absolute;top:-10%;bottom:-10%;width:34%;filter:blur(.1px)}
-    .branch-left{left:-4%}
-    .branch-right{right:-4%}
-    .branch-left::after,.branch-right::after{content:"";position:absolute;inset:0;background-repeat:no-repeat;background-size:100% 100%;opacity:.95}
-    .branch-left::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 430 1300'%3E%3Cpath d='M100 0 C50 120,85 175,70 255 C55 335,15 395,60 470 C115 565,120 660,80 745 C45 820,75 895,140 965 C210 1045,165 1155,135 1300 L0 1300 L0 0 Z' fill='%23040303'/%3E%3Cpath d='M245 0 C200 140,285 240,245 360 C210 470,320 555,280 685 C250 785,270 950,350 1300 L185 1300 C160 1170,145 1085,125 975 C105 835,100 730,155 585 C200 470,130 365,170 240 C210 115,175 55,155 0 Z' fill='%23070606'/%3E%3C/svg%3E");}
-    .branch-right::after{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 430 1300'%3E%3Cpath d='M335 0 C365 95,335 165,355 275 C380 395,300 455,312 540 C325 625,380 720,355 830 C338 925,290 1040,262 1300 L430 1300 L430 0 Z' fill='%23040303'/%3E%3Cpath d='M165 0 C132 150,180 255,160 350 C138 450,55 540,105 680 C150 800,98 995,25 1300 L188 1300 C230 1130,255 1010,262 845 C268 660,188 560,225 418 C255 305,240 182,266 0 Z' fill='%23070606'/%3E%3C/svg%3E");}
+    .layer-foreground{pointer-events:none;z-index:12;opacity:.08;mix-blend-mode:multiply;transform:translate3d(0,0,170px);transition:opacity .8s ease}
+    .branch-left,.branch-right{position:absolute;top:0;bottom:0;width:8%;filter:blur(22px)}
+    .branch-left{left:-1%}
+    .branch-right{right:-1%}
+    .branch-left::after,.branch-right::after{content:"";position:absolute;inset:0;background-repeat:no-repeat;background-size:100% 100%;opacity:1}
+    .branch-left::after{background:linear-gradient(90deg, rgba(0,0,0,.18), rgba(0,0,0,.05) 45%, transparent 100%)}
+    .branch-right::after{background:linear-gradient(270deg, rgba(0,0,0,.18), rgba(0,0,0,.05) 45%, transparent 100%)}
 
 
     .portal-arch{
@@ -187,6 +190,7 @@
       pointer-events:none;
       z-index:6;
       opacity:.9;
+      transition:transform 1s ease, opacity .8s ease;
     }
     .portal-arch::before,.portal-arch::after{
       content:"";
@@ -218,7 +222,7 @@
       opacity:.8;
     }
 
-    .interactive-halo{position:absolute;left:50%;top:60%;width:min(34vw,300px);height:min(38vh,390px);transform:translate(-50%,-50%);pointer-events:none;z-index:8;opacity:.84}
+    .interactive-halo{position:absolute;left:50%;top:60%;width:min(34vw,300px);height:min(38vh,390px);transform:translate(-50%,-50%);pointer-events:none;z-index:8;opacity:.84;transition:opacity .6s ease}
     .interactive-halo .eye,.interactive-halo .blade,.interactive-halo .aura{position:absolute;opacity:0;transition:opacity .18s ease}
     .interactive-halo .eye{top:29%;width:18px;height:9px;border-radius:50%;background:radial-gradient(circle at 50% 50%, #fff, #ffd7c7 28%, #ff5c3d 63%, rgba(255,65,38,.1));box-shadow:0 0 12px #fff,0 0 28px rgba(255,85,48,.92),0 0 60px rgba(255,73,41,.5)}
     .interactive-halo .eye.left{left:43%}
@@ -316,6 +320,53 @@
     .ring.fire{animation:ring 1s ease-out}
     @keyframes ring{0%{opacity:.9;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(-50%,-50%) scale(13)}}
 
+
+    .site.realm-open .layer-video-wrap{opacity:.02;transform:translate3d(calc(-50% + var(--videoX) * .25),calc(-50% + var(--videoY) * .08 - 30px),60px) scale(.74)}
+    .site.realm-open .portal-arch{opacity:0;transform:translate(-50%,-52%) translateZ(80px) scale(.82)}
+    .site.realm-open .interactive-halo,
+    .site.realm-open .samurai-hotspot{opacity:0;pointer-events:none}
+    .site.realm-open .layer-panorama{opacity:1;filter:saturate(1.05) contrast(1.05) brightness(.94);transform:translate3d(calc(var(--panoPan) + var(--gyroShiftX) * .2),calc(var(--lookY) * .04 + var(--gyroShiftY) * .08),-32px) scale(1.24)}
+    .site.realm-open .layer-panorama-glow{opacity:.34;transform:translate3d(calc(var(--panoGlowPan) + var(--gyroShiftX) * .12),calc(var(--lookY) * .02 + var(--gyroShiftY) * .05),-10px) scale(1.26)}
+    .site.realm-open .layer-foreground{opacity:.04}
+    .site.realm-open .red-glow{opacity:.55}
+
+    .outro{
+      position:absolute;
+      inset:0;
+      z-index:41;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      background:radial-gradient(circle at 50% 44%,rgba(68,14,10,.22),rgba(5,3,3,.74) 64%,rgba(5,3,3,.9));
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+      transition:opacity .9s ease,visibility .9s ease;
+    }
+    .outro.show{opacity:1;visibility:visible;pointer-events:auto}
+    .outro-card{
+      width:min(560px,92vw);
+      padding:30px 26px;
+      text-align:center;
+      border:1px solid rgba(255,224,205,.16);
+      background:rgba(12,7,6,.66);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      border-radius:28px;
+      box-shadow:0 28px 90px rgba(0,0,0,.42),inset 0 0 50px rgba(255,100,60,.035);
+      transform:translateY(18px) scale(.98);
+      transition:transform .9s cubic-bezier(.2,.8,.2,1);
+    }
+    .outro.show .outro-card{transform:none}
+    .outro-kicker{margin:0 0 12px;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,220,198,.62)}
+    .outro h2{margin:0;font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(36px,8vw,72px);line-height:.95;letter-spacing:.035em}
+    .outro-copy{max-width:430px;margin:18px auto 24px;color:rgba(255,238,225,.72);font-family:Georgia,serif;font-size:15px;line-height:1.6}
+    .outro-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+    .outro .cta-link,.outro .ghost-link{min-width:170px;padding:14px 18px}
+    .outro-brand{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:22px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,231,214,.5)}
+    .outro-brand i{width:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,220,195,.55))}
+    .outro-brand i:last-child{transform:scaleX(-1)}
+
     @media (max-width:860px){
       .chapter{display:none}
       .ghost-link{display:none}
@@ -332,9 +383,19 @@
       .demo-float{right:12px;left:12px;bottom:12px}
       .demo-float .cta-link{width:100%;justify-content:center}
       .orbit-nav{padding:0 10px}
-      .hud{padding:14px}
-      .topbar{align-items:flex-start}
-      .control-cluster{flex-wrap:wrap;justify-content:flex-end}
+      .hud{padding:12px}
+      .topbar{align-items:flex-start;gap:8px}
+      .brand{font-size:9px;letter-spacing:.22em;gap:8px}
+      .brand-mark{height:26px}
+      .control-cluster{gap:6px;flex-wrap:nowrap;justify-content:flex-end}
+      .icon-btn,.orbit-btn{width:38px;height:38px}
+      .icon-btn svg,.orbit-btn svg{width:15px;height:15px}
+      #centerBtn{display:none}
+      .bottombar{align-items:flex-end}
+      .prompt{max-width:62vw;line-height:1.45}
+      .outro-card{padding:25px 18px;border-radius:22px}
+      .outro-actions{flex-direction:column}
+      .outro .cta-link,.outro .ghost-link{width:100%;min-width:0}
     }
     @media (prefers-reduced-motion:reduce){
       *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
@@ -358,7 +419,7 @@
           <div class="portal-glow"></div>
           <div class="portal-rim"></div>
           <div class="portal-shell">
-            <video id="heroVideo" class="hero-video" poster="assets/samurai-poster.jpg" playsinline loop preload="auto">
+            <video id="heroVideo" class="hero-video" poster="assets/samurai-poster.jpg" playsinline preload="auto">
               <source src="assets/samurai-hero.mp4" type="video/mp4" />
             </video>
             <div class="portal-vignette"></div>
@@ -399,7 +460,7 @@
     <div class="hud">
       <div class="topbar">
         <div class="brand"><span class="brand-mark"></span><span>Crimson Path</span></div>
-        <div class="chapter">Chapter I · Portal Gate Awakening</div>
+        <div class="chapter" id="chapterLabel">Chapter I · Flush 360 Awakening</div>
         <div class="control-cluster">
           <a class="ghost-link" href="https://demo.getclientcapture.co.uk/enquiry.html" target="_blank" rel="noopener">Book a Demo</a>
           <button class="icon-btn" id="gyroBtn" aria-label="Enable motion look" title="Motion look">
@@ -417,7 +478,7 @@
         </div>
       </div>
       <div class="bottombar">
-        <div class="prompt"><span class="pulse-dot"></span><span>Drag continuously for a 360° view · Touch the warrior</span></div>
+        <div class="prompt"><span class="pulse-dot"></span><span id="promptText">Drag for a cleaner flush 360° panorama · Touch the warrior</span></div>
         <div class="seal">Ronin / 浪人</div>
       </div>
     </div>
@@ -428,6 +489,19 @@
     <div class="demo-float">
       <a class="cta-link" href="https://demo.getclientcapture.co.uk/enquiry.html" target="_blank" rel="noopener">Book a Demo</a>
     </div>
+
+    <section class="outro" id="outro" aria-label="ClientCapture outro">
+      <div class="outro-card">
+        <p class="outro-kicker">Built by ClientCapture</p>
+        <h2>Your world.<br>Your digital front door.</h2>
+        <p class="outro-copy">Immersive portals designed to turn attention into enquiries, bookings and real conversations.</p>
+        <div class="outro-actions">
+          <a class="cta-link" href="https://demo.getclientcapture.co.uk/enquiry.html" target="_blank" rel="noopener">Book a Demo</a>
+          <button class="ghost-link" id="exploreBtn" type="button">Keep Exploring</button>
+        </div>
+        <div class="outro-brand"><i></i><span>ClientCapture</span><i></i></div>
+      </div>
+    </section>
 
     <section class="intro" id="intro" aria-label="Enter the experience">
       <div class="intro-bg"></div>
@@ -467,6 +541,10 @@
     const ring = document.getElementById('ring');
     const halo = document.getElementById('halo');
     const toast = document.getElementById('toast');
+    const outro = document.getElementById('outro');
+    const exploreBtn = document.getElementById('exploreBtn');
+    const chapterLabel = document.getElementById('chapterLabel');
+    const promptText = document.getElementById('promptText');
     const panMeter = document.getElementById('panMeter').querySelector('i');
     const root = document.documentElement;
 
@@ -477,6 +555,8 @@
     let lastSlashAt = 0;
     let toastTimer;
     let motionEnabled = false;
+    let realmOpen = false;
+    let outroTimer;
 
     const state = {
       pointerX: innerWidth / 2,
@@ -498,7 +578,7 @@
     };
 
     const PAN_PERIOD = 1180;
-    const MAX_ORBIT_DEG = 11;
+    const MAX_ORBIT_DEG = 0;
     const MAX_TILT_DEG = 8;
 
     function clamp(value, min, max){ return Math.min(max, Math.max(min, value)); }
@@ -570,8 +650,8 @@
       const width = panMeter.parentElement.clientWidth;
       const sliderWidth = width * .32;
       const maxTravel = width - sliderWidth;
-      const normalized = ((state.currentPanPx % 360) + 360) % 360;
-      const pos = (normalized / 360) * maxTravel;
+      const normalized = ((state.currentPanPx % PAN_PERIOD) + PAN_PERIOD) % PAN_PERIOD;
+      const pos = (normalized / PAN_PERIOD) * maxTravel;
       panMeter.style.setProperty('--meter', pos + 'px');
     }
 
@@ -597,18 +677,18 @@
       state.currentGyroOrbitX += (state.targetGyroOrbitX - state.currentGyroOrbitX) * .12;
       state.currentGyroOrbitY += (state.targetGyroOrbitY - state.currentGyroOrbitY) * .12;
 
-      const orbitDeg = Math.sin((state.currentPanPx / PAN_PERIOD) * Math.PI * 2) * MAX_ORBIT_DEG;
+      const orbitDeg = 0;
       const tiltDeg = clamp((-state.lookY / 14) * MAX_TILT_DEG, -MAX_TILT_DEG, MAX_TILT_DEG);
 
       const wrapped = ((state.currentPanPx % PAN_PERIOD) + PAN_PERIOD) % PAN_PERIOD;
       const centeredWrap = wrapped - PAN_PERIOD / 2;
       root.style.setProperty('--panPx', state.currentPanPx + 'px');
       root.style.setProperty('--wrappedPan', centeredWrap + 'px');
-      root.style.setProperty('--backPan', centeredWrap * .82 + 'px');
-      root.style.setProperty('--panoPan', centeredWrap * 1.08 + 'px');
-      root.style.setProperty('--panoGlowPan', centeredWrap * 1.18 + 'px');
-      root.style.setProperty('--atmoPan', centeredWrap * .45 + 'px');
-      root.style.setProperty('--forePan', centeredWrap * .72 + 'px');
+      root.style.setProperty('--backPan', centeredWrap * .94 + 'px');
+      root.style.setProperty('--panoPan', centeredWrap * 1.22 + 'px');
+      root.style.setProperty('--panoGlowPan', centeredWrap * 1.26 + 'px');
+      root.style.setProperty('--atmoPan', centeredWrap * .38 + 'px');
+      root.style.setProperty('--forePan', centeredWrap * .05 + 'px');
       root.style.setProperty('--orbitDeg', orbitDeg + 'deg');
       root.style.setProperty('--tiltDeg', tiltDeg + 'deg');
       root.style.setProperty('--gyroShiftX', state.currentGyroShiftX + 'px');
@@ -623,6 +703,8 @@
     async function enterExperience() {
       if (entered) return;
       entered = true;
+      resetRealm();
+      video.currentTime = 0;
       fireSlash(1);
       setTimeout(async () => {
         site.classList.add('entered');
@@ -700,13 +782,51 @@
       state.targetPanPx += amount;
     }
 
+    function setRealmCopy(opened) {
+      if (opened) {
+        chapterLabel.textContent = 'Chapter II · The Full Realm';
+        promptText.textContent = 'The panorama is now open · drag freely to explore the wrapped world';
+      } else {
+        chapterLabel.textContent = 'Chapter I · Flush 360 Awakening';
+        promptText.textContent = 'Drag for a cleaner flush 360° panorama · Touch the warrior';
+      }
+    }
+
+    function hideOutro() {
+      clearTimeout(outroTimer);
+      outro.classList.remove('show');
+    }
+
+    function scheduleOutro() {
+      clearTimeout(outroTimer);
+      outroTimer = setTimeout(() => outro.classList.add('show'), 5200);
+    }
+
+    function openRealmTransition() {
+      if (realmOpen) return;
+      realmOpen = true;
+      fireSlash(.72);
+      burst(innerWidth * .5, innerHeight * .5, 22);
+      setTimeout(() => site.classList.add('realm-open'), 180);
+      setRealmCopy(true);
+      showToast('The full realm opens');
+      scheduleOutro();
+    }
+
+    function resetRealm() {
+      realmOpen = false;
+      site.classList.remove('realm-open');
+      hideOutro();
+      setRealmCopy(false);
+    }
+
     function recenterView(silent = false) {
       state.targetPanPx = 0;
       state.targetGyroShiftX = 0;
       state.targetGyroShiftY = 0;
       state.targetGyroOrbitX = 0;
       state.targetGyroOrbitY = 0;
-      if (!silent) showToast('View centered');
+      if (!silent) showToast(realmOpen ? 'Realm centered' : 'View centered');
     }
 
     window.addEventListener('deviceorientation', e => {
@@ -715,16 +835,17 @@
       const beta = clamp((e.beta || 0) - 45, -30, 30);
       state.targetGyroShiftX = gamma * 1.9;
       state.targetGyroShiftY = beta * .8;
-      state.targetGyroOrbitX = gamma * .22;
-      state.targetGyroOrbitY = beta * -.07;
+      state.targetGyroOrbitX = 0;
+      state.targetGyroOrbitY = beta * -.03;
     });
 
     enterBtn.addEventListener('click', enterExperience);
     samurai.addEventListener('click', awaken);
     gyroBtn.addEventListener('click', enableMotionLook);
     centerBtn.addEventListener('click', () => recenterView(false));
-    panLeft.addEventListener('click', () => nudgePan(-120));
-    panRight.addEventListener('click', () => nudgePan(120));
+    panLeft.addEventListener('click', () => nudgePan(-320));
+    panRight.addEventListener('click', () => nudgePan(320));
+    exploreBtn.addEventListener('click', hideOutro);
 
     soundBtn.addEventListener('click', async () => {
       video.muted = !video.muted;
@@ -739,6 +860,7 @@
     });
 
     replayBtn.addEventListener('click', () => {
+      resetRealm();
       fireSlash(1);
       burst(innerWidth * .5, innerHeight * .5, 20);
       video.currentTime = 0;
@@ -748,6 +870,7 @@
 
     site.addEventListener('pointerdown', e => {
       if (!entered || e.target.closest('button,a')) return;
+      hideOutro();
       dragging = true;
       activePointerId = e.pointerId;
       state.startX = e.clientX;
@@ -762,7 +885,7 @@
       updateLook(e.clientX, e.clientY);
       if (dragging && e.pointerId === activePointerId) {
         const delta = e.clientX - state.startX;
-        state.targetPanPx = state.dragStartPan + delta * 1.35;
+        state.targetPanPx = state.dragStartPan + delta * 2.15;
         if (performance.now() - lastSlashAt > 180) {
           lastSlashAt = performance.now();
           const spark = document.createElement('i');
@@ -791,9 +914,13 @@
 
     window.addEventListener('keydown', e => {
       if (!entered) return;
-      if (e.key === 'ArrowLeft') nudgePan(-90);
-      if (e.key === 'ArrowRight') nudgePan(90);
+      if (e.key === 'ArrowLeft') nudgePan(-260);
+      if (e.key === 'ArrowRight') nudgePan(260);
       if (e.key.toLowerCase() === 'c') recenterView(false);
+    });
+
+    video.addEventListener('ended', () => {
+      openRealmTransition();
     });
 
     video.addEventListener('error', () => {
@@ -803,12 +930,13 @@
 
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) video.pause();
-      else if (entered) video.play().catch(() => {});
+      else if (entered && !realmOpen) video.play().catch(() => {});
     });
 
     window.addEventListener('resize', () => updateLook(innerWidth / 2, innerHeight / 2));
     updateLook(innerWidth / 2, innerHeight / 2);
     root.style.setProperty('--wrappedPan','0px');
+    setRealmCopy(false);
     recenterView(true);
   </script>
 </body>
